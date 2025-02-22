@@ -89,6 +89,11 @@ public class playerController : MonoBehaviour
     {
         rb.gravityScale = 0f;
         rb.linearVelocity = new Vector2(moveInputHorizontal * speed, moveInputVertical * climbSpeed);
+        if(moveInputVertical == 0)
+        {
+            rb.linearVelocity = new Vector2(moveInputHorizontal * speed, -2f);
+        }
+        
     }
 
     void Flip()

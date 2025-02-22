@@ -23,13 +23,22 @@ public class playerController : MonoBehaviour
     // Personagem escalar
     public float climbSpeed = 4f;
     private bool isClimbing = false;
-
     private float normalGravity;
+
+    // Controlar animação
+    private Animator animator;
+
   
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         normalGravity = rb.gravityScale; // guarda o valor original da gravidade
+        animator = GetComponent<Animator>();
+        
+        animator.SetBool("IsIdle", true);
+        animator.SetBool("IsJumping", false);
+        animator.SetBool("IsRunning", false);
+        animator.SetBool("IsClimbingLado", false);
     }
     void Update()
     {
@@ -58,13 +67,39 @@ public class playerController : MonoBehaviour
     {
         
         rb.linearVelocity = new Vector2(moveInputHorizontal * speed, rb.linearVelocity.y);
+        
         if (moveInputHorizontal > 0 && !isFacingRight) // Se mover para a direita e o personagem está virado para a esquerda
         {
             Flip();
+            
         }
         else if (moveInputHorizontal < 0 && isFacingRight) // Se mover para a esquerda e o personagem está virado para a direita
         {
             Flip();
+        }
+
+        if(moveInputHorizontal == 0 && isGrounded == true)
+        {
+            animator.SetBool("IsIdle", true);
+            animator.SetBool("IsJumping", false);
+            animator.SetBool("IsRunning", false);
+            animator.SetBool("IsClimbingLado", false);
+        }
+
+        else if(moveInputHorizontal != 0 && isGrounded == true)
+        {
+            animator.SetBool("IsIdle", false);
+            animator.SetBool("IsJumping", false);
+            animator.SetBool("IsRunning", true);
+            animator.SetBool("IsClimbingLado", false);
+        }
+
+        else if(moveInputHorizontal != 0 && isGrounded == false)
+        {
+            animator.SetBool("IsIdle", false);
+            animator.SetBool("IsJumping", true);
+            animator.SetBool("IsRunning", false);
+            animator.SetBool("IsClimbingLado", false);
         }
        
     }
@@ -77,18 +112,34 @@ public class playerController : MonoBehaviour
         if (isGrounded && Input.GetKeyDown(KeyCode.Space))
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            
+            animator.SetBool("IsIdle", false);
+            animator.SetBool("IsJumping", true);
+            animator.SetBool("IsRunning", false);
+            animator.SetBool("IsClimbingLado", false);
         }
     }
 
     void JumpInClimbing()
     {
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+
+        animator.SetBool("IsIdle", false);
+        animator.SetBool("IsJumping", true);
+        animator.SetBool("IsRunning", false);
+        animator.SetBool("IsClimbingLado", false);
     }
 
     void Escalada()
     {
         rb.gravityScale = 0f;
         rb.linearVelocity = new Vector2(moveInputHorizontal * speed, moveInputVertical * climbSpeed);
+        
+        animator.SetBool("IsIdle", false);
+        animator.SetBool("IsJumping", false);
+        animator.SetBool("IsRunning", false);
+        animator.SetBool("IsClimbingLado", true);
+
         if(moveInputVertical == 0)
         {
             rb.linearVelocity = new Vector2(moveInputHorizontal * speed, -2f);
@@ -122,6 +173,9 @@ public class playerController : MonoBehaviour
         {
             isClimbing = false;
             rb.gravityScale = normalGravity;
+
+            animator.SetBool("IsClimbingLado", false);
+            
         }
     }
 

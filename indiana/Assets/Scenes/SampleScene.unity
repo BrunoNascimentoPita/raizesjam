@@ -989,8 +989,8 @@ Transform:
   m_GameObject: {fileID: 1053042031}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.36, y: 0.25, z: 0}
-  m_LocalScale: {x: 0.5752046, y: 9.643122, z: 1}
+  m_LocalPosition: {x: -4.36, y: 9.06, z: 0}
+  m_LocalScale: {x: 0.5752046, y: 23.6, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1007,6 +1007,7 @@ GameObject:
   - component: {fileID: 1148627530}
   - component: {fileID: 1148627529}
   - component: {fileID: 1148627528}
+  - component: {fileID: 1148627532}
   m_Layer: 0
   m_Name: Pixel Perfect Camera
   m_TagString: Untagged
@@ -1148,6 +1149,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1148627532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1148627527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31b79eb7cd3619b438d2bb3de78b0344, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 1823994943}
+  smoothSpeed: 5
+  offset: {x: 0, y: 3, z: -10}
 --- !u!1 &1208401114
 GameObject:
   m_ObjectHideFlags: 0
@@ -1346,7 +1362,7 @@ GameObject:
   - component: {fileID: 1823994944}
   m_Layer: 0
   m_Name: PlayerTeste
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1832,7 +1848,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.5, y: -2.4, z: 0}
-  m_LocalScale: {x: 17.483421, y: 1, z: 1}
+  m_LocalScale: {x: 404.34, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

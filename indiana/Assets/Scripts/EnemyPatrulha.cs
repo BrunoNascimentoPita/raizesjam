@@ -3,6 +3,8 @@ using UnityEngine;
 public class EnemyPatrulha : MonoBehaviour
 {
     private Rigidbody2D rb;
+
+    public int danoParaDar;
     private SpriteRenderer spriteRenderer;
     private Animator animatorTatu;
 
@@ -94,6 +96,13 @@ public class EnemyPatrulha : MonoBehaviour
 
             animatorTatu.Play("patrulhandoTatu");
             rb.linearVelocity = new Vector2(direction * patrolSpeed, rb.linearVelocity.y);
+        }
+    }
+
+    private void OnCollisionStay2D(Collision2D other) {
+        if(other.gameObject.tag == "Player")
+        {
+            other.gameObject.GetComponent<PlayerLife>().MachucarPlayer(danoParaDar);
         }
     }
 }

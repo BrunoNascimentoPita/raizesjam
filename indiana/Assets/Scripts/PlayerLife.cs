@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PlayerLife : MonoBehaviour
 {
@@ -9,8 +10,10 @@ public class PlayerLife : MonoBehaviour
     public int vidaMaxPlayer;
     public int vidaAtualPlayer;
 
+    public bool invulneravel = false;
+
     // colisão e sprite depois do dano
-    public BoxCollider2D boxCol2D;
+
     public SpriteRenderer sprite;
 
 
@@ -42,18 +45,24 @@ public class PlayerLife : MonoBehaviour
 
     public void MachucarPlayer(int DanoParaReceber)
     {
-        vidaAtualPlayer -= DanoParaReceber;
-        if(vidaAtualPlayer <= 0)
+        if(invulneravel == false)
         {
-            //GameManager.instance.GameOver();
+            vidaAtualPlayer -= DanoParaReceber;
+
+            if(vidaAtualPlayer <= 0)
+            {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            }
+        
+        
+            StartCoroutine("ReativarVulnerabilidade");
         }
         
-        boxCol2D.enabled = false;
-        StartCoroutine("ReativarBoxCollider2D");
     }
 
-    IEnumerator ReativarBoxCollider2D()
+    IEnumerator ReativarVulnerabilidade()
     {
+        invulneravel = true;
         for(int i = 0; i < 5; i++)
         {
             sprite.enabled = false;
@@ -63,6 +72,6 @@ public class PlayerLife : MonoBehaviour
         }
         
         yield return new WaitForSeconds(0.5f);
-        boxCol2D.enabled = true;
+        invulneravel = false;
     }
 }

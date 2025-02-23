@@ -186,7 +186,7 @@ public void TogglePause()
         if (collision.collider.CompareTag("morte"))
         {
             
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
 

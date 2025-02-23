@@ -24,8 +24,7 @@ public class playerController : MonoBehaviour
     public float climbSpeed = 4f;
     private bool isClimbing = false;
     private float normalGravity;
- private bool isPaused = false;
- public GameObject pauseMenu;
+
     // Controlar animação
     private Animator animator;
 
@@ -35,6 +34,9 @@ public class playerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         normalGravity = rb.gravityScale; // guarda o valor original da gravidade
         animator = GetComponent<Animator>();
+        
+        Time.timeScale = 1f;
+
         
         animator.SetBool("IsIdle", true);
         animator.SetBool("IsJumping", false);
@@ -48,11 +50,7 @@ public class playerController : MonoBehaviour
             
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
-        if (Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Escape))
-        {
-            TogglePause();
-            
-        }
+    
         moveInputHorizontal = Input.GetAxisRaw("Horizontal");
         moveInputVertical = Input.GetAxisRaw("Vertical");
 
@@ -72,15 +70,7 @@ public class playerController : MonoBehaviour
         }
         
     }
-public void TogglePause()
-    {
-        isPaused = !isPaused;
-        Time.timeScale = isPaused ? 0 : 1;
-          if (pauseMenu != null)
-        {
-            pauseMenu.SetActive(isPaused);
-        }
-    }
+
     // Update is called once per frame
     void Movement()
     {

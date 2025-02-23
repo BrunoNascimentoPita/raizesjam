@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 public class ativarDesativarMouse : MonoBehaviour
-{public Texture2D customCursor; // Arraste sua textura de cursor personalizada aqui
+{
+    public Texture2D customCursor; // Arraste sua textura de cursor personalizada aqui
     public Vector2 hotspot = Vector2.zero; // Ponto de clique do cursor (ajuste se necessário)
     public CursorMode cursorMode = CursorMode.Auto;
 

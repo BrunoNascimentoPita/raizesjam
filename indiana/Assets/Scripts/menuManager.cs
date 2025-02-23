@@ -24,6 +24,10 @@ public class menuManager : MonoBehaviour
         {
             MusicController.instance.TocarMusicaMenu();
         }
+        if(SceneManager.GetActiveScene().name == "level1")
+        {
+            MusicController.instance.TocarMusicaJogo();
+        }
     }
 
     void Update()

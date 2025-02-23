@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 public class playerController : MonoBehaviour
 {
     private Rigidbody2D rb;
@@ -24,7 +24,8 @@ public class playerController : MonoBehaviour
     public float climbSpeed = 4f;
     private bool isClimbing = false;
     private float normalGravity;
-
+ private bool isPaused = false;
+ public GameObject pauseMenu;
     // Controlar animação
     private Animator animator;
 
@@ -42,6 +43,15 @@ public class playerController : MonoBehaviour
     }
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+        if (Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Escape))
+        {
+            TogglePause();
+            
+        }
         moveInputHorizontal = Input.GetAxisRaw("Horizontal");
         moveInputVertical = Input.GetAxisRaw("Vertical");
 
@@ -61,7 +71,15 @@ public class playerController : MonoBehaviour
         }
         
     }
-
+public void TogglePause()
+    {
+        isPaused = !isPaused;
+        Time.timeScale = isPaused ? 0 : 1;
+          if (pauseMenu != null)
+        {
+            pauseMenu.SetActive(isPaused);
+        }
+    }
     // Update is called once per frame
     void Movement()
     {
@@ -163,6 +181,11 @@ public class playerController : MonoBehaviour
         if (collision.collider.CompareTag("climbable"))
         {
             isClimbing = true;
+        }
+        if (collision.collider.CompareTag("morte"))
+        {
+            
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
 

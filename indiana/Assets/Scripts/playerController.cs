@@ -45,6 +45,7 @@ public class playerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.R))
         {
+            
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
         if (Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Escape))

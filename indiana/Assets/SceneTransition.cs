@@ -26,6 +26,7 @@ public class SceneTransition : MonoBehaviour
         {
             fill -= Time.deltaTime * transitionSpeed;
             fillImage.fillAmount = fill;
+            fillImage.gameObject.SetActive(true); 
             yield return null;
         }
     }

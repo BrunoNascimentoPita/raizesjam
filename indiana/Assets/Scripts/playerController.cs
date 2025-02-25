@@ -1,196 +1,156 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
 public class playerController : MonoBehaviour
 {
     private Rigidbody2D rb;
-    // Movimentação
     private float moveInputHorizontal;
     private float moveInputVertical;
     public float speed = 5f;
-    // Pulo
     public float jumpForce;
     private bool isGrounded;
-
-        // Checar se está tocando no chão
-
     public Transform groundCheck;
     public float checkRadius = 0.2f;
     public LayerMask groundLayer;
-
-    // personagem mudar de lado
     private bool isFacingRight = true;
-
-    // Personagem escalar
     public float climbSpeed = 4f;
     private bool isClimbing = false;
     private float normalGravity;
-
-    // Controlar animação
     private Animator animator;
 
-  
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        normalGravity = rb.gravityScale; // guarda o valor original da gravidade
+        normalGravity = rb.gravityScale;
         animator = GetComponent<Animator>();
-        
         Time.timeScale = 1f;
-
-        
-        animator.SetBool("IsIdle", true);
-        animator.SetBool("IsJumping", false);
-        animator.SetBool("IsRunning", false);
-        animator.SetBool("IsClimbingLado", false);
+        animator.Play("PlayerIdle");
     }
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.R))
         {
-            
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
-    
+
         moveInputHorizontal = Input.GetAxisRaw("Horizontal");
         moveInputVertical = Input.GetAxisRaw("Vertical");
 
         Movement();
         Jump();
 
-        if (isClimbing == true)
+        if (isClimbing)
         {
             Escalada();
 
-            if(Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space))
             {
                 isClimbing = false;
                 rb.gravityScale = normalGravity;
                 JumpInClimbing();
             }
         }
-        
     }
 
-    // Update is called once per frame
     void Movement()
+{
+    rb.linearVelocity = new Vector2(moveInputHorizontal * speed, rb.linearVelocity.y);
+
+    if ((moveInputHorizontal > 0 && !isFacingRight) || (moveInputHorizontal < 0 && isFacingRight))
     {
-        
-        rb.linearVelocity = new Vector2(moveInputHorizontal * speed, rb.linearVelocity.y);
-        
-        if (moveInputHorizontal > 0 && !isFacingRight) // Se mover para a direita e o personagem está virado para a esquerda
-        {
-            Flip();
-            
-        }
-        else if (moveInputHorizontal < 0 && isFacingRight) // Se mover para a esquerda e o personagem está virado para a direita
-        {
-            Flip();
-        }
-
-        if(moveInputHorizontal == 0 && isGrounded == true)
-        {
-            animator.SetBool("IsIdle", true);
-            animator.SetBool("IsJumping", false);
-            animator.SetBool("IsRunning", false);
-            animator.SetBool("IsClimbingLado", false);
-        }
-
-        else if(moveInputHorizontal != 0 && isGrounded == true)
-        {
-            animator.SetBool("IsIdle", false);
-            animator.SetBool("IsJumping", false);
-            animator.SetBool("IsRunning", true);
-            animator.SetBool("IsClimbingLado", false);
-        }
-
-        else if(moveInputHorizontal != 0 && isGrounded == false)
-        {
-            animator.SetBool("IsIdle", false);
-            animator.SetBool("IsJumping", true);
-            animator.SetBool("IsRunning", false);
-            animator.SetBool("IsClimbingLado", false);
-        }
-       
+        Flip();
     }
+
+    if (isGrounded && !isClimbing)
+    {
+        animator.Play(moveInputHorizontal == 0 ? "PlayerIdle" : "PlayerRun");
+    }
+    else if (!isGrounded && !isClimbing)
+    {
+        animator.Play("PlayerJump");
+    }
+}
+
+
     void Jump()
     {
-        // verifica se o personagem está no chão usando o circulo de checagem e retorna um bool
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, groundLayer);
-        
-        
+
         if (isGrounded && Input.GetKeyDown(KeyCode.Space))
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-            
-            animator.SetBool("IsIdle", false);
-            animator.SetBool("IsJumping", true);
-            animator.SetBool("IsRunning", false);
-            animator.SetBool("IsClimbingLado", false);
+            isGrounded = false;
+            animator.Play("PlayerJump");
         }
     }
 
-    void JumpInClimbing()
-    {
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+   void JumpInClimbing()
+{
+    rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
 
-        animator.SetBool("IsIdle", false);
-        animator.SetBool("IsJumping", true);
-        animator.SetBool("IsRunning", false);
-        animator.SetBool("IsClimbingLado", false);
+    // Somente desativa a escalada se não estiver mais tocando a superfície escalável
+    if (!IsTouchingClimbable())
+    {
+        isClimbing = false;
+        rb.gravityScale = normalGravity;
     }
 
+    animator.Play("PlayerJump");
+}
+bool IsTouchingClimbable()
+{
+    Collider2D[] colliders = Physics2D.OverlapCircleAll(groundCheck.position, checkRadius);
+    foreach (Collider2D collider in colliders)
+    {
+        if (collider.CompareTag("climbable"))
+        {
+            return true;
+        }
+    }
+    return false;
+}
     void Escalada()
     {
         rb.gravityScale = 0f;
-        rb.linearVelocity = new Vector2(moveInputHorizontal * speed, moveInputVertical * climbSpeed);
         
-        animator.SetBool("IsIdle", false);
-        animator.SetBool("IsJumping", false);
-        animator.SetBool("IsRunning", false);
-        animator.SetBool("IsClimbingLado", true);
+        rb.linearVelocity = new Vector2(moveInputHorizontal * speed, moveInputVertical * climbSpeed);
+        animator.Play("PlayerClimbingDeLado");
 
-        if(moveInputVertical == 0)
+        if (moveInputVertical == 0)
         {
+            
             rb.linearVelocity = new Vector2(moveInputHorizontal * speed, -2f);
         }
-        
     }
 
     void Flip()
     {
-        isFacingRight = !isFacingRight; // Inverte o valor de isFacingRight
-
-        // Inverte a escala no eixo X para flipar o personagem
+        isFacingRight = !isFacingRight;
         Vector3 localScale = transform.localScale;
         localScale.x *= -1;
         transform.localScale = localScale;
     }
 
-    // Detecta entrada em áreas escaláveis (objetos com tag "climbable")
-    void OnCollisionEnter2D(Collision2D collision)
+   void OnCollisionStay2D(Collision2D collision)
+{
+    if (collision.collider.CompareTag("climbable"))
     {
-        if (collision.collider.CompareTag("climbable"))
-        {
-            isClimbing = true;
-        }
-        if (collision.collider.CompareTag("morte"))
-        {
-            
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }
+        isClimbing = true;
     }
-
-    // Detecta saída das áreas escaláveis
-   void OnCollisionExit2D(Collision2D collision)
+    if (collision.collider.CompareTag("morte"))
     {
-        if (collision.collider.CompareTag("climbable"))
-        {
-            isClimbing = false;
-            rb.gravityScale = normalGravity;
-
-            animator.SetBool("IsClimbingLado", false);
-            
-        }
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
+}   
 
+ void OnCollisionExit2D(Collision2D collision)
+{
+    if (collision.collider.CompareTag("climbable"))
+    {
+        isClimbing = false;
+        rb.gravityScale = normalGravity;
+        animator.Play("PlayerIdle");
+    }
+}
 }

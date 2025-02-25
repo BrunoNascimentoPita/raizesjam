@@ -4,7 +4,8 @@ public class menuManager : MonoBehaviour
 {
     private bool isPaused = false;
     public GameObject pauseMenu;
-
+float targetVolume = 0.5f; // Volume desejado
+float volumeSpeed = 2.5f;
     public float inactivityTime = 5f;
     
     // Timer para contar o tempo de inatividade
@@ -54,6 +55,7 @@ public class menuManager : MonoBehaviour
                 Cursor.visible = false;
             }
         }
+        AudioListener.volume = Mathf.Lerp(AudioListener.volume, targetVolume, Time.unscaledDeltaTime * volumeSpeed);
     }
     public void exit(){
         Application.Quit();
@@ -77,6 +79,10 @@ public class menuManager : MonoBehaviour
         if (pauseMenu != null)
         {
             pauseMenu.SetActive(isPaused);
+        }
+       if (SceneManager.GetActiveScene().name == "level1")
+        {
+    targetVolume = isPaused ? 0.1f : 0.5f;
         }
     }
 }
